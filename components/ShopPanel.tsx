@@ -1,0 +1,10 @@
+'use client';
+import Link from 'next/link';
+import { useShop } from '@/components/ShopProvider';
+import { featuredProducts } from '@/lib/products';
+import { outfits } from '@/lib/outfits';
+export default function ShopPanel({mode}:{mode:'bag'|'favorites'}){
+ const {cart,favorites,removeItem,changeQuantity,toggleFavorite}=useShop();
+ if(mode==='bag')return <div className="shop-panel">{cart.length===0?<p>Your bag is empty.</p>:<>{cart.map(line=><article className="shop-line" key={`${line.id}-${line.color}`}><Link href={`/products/${line.id}?color=${encodeURIComponent(line.color)}`}><img src={line.image} alt={line.name}/></Link><div><Link href={`/products/${line.id}`}>{line.name}</Link><p>{line.color} · {line.price} TND</p><div className="quantity-control"><button aria-label={`Decrease ${line.name} quantity`} disabled={line.quantity===1} onClick={()=>changeQuantity(line.id,line.color,line.quantity-1)}>−</button><span>{line.quantity}</span><button aria-label={`Increase ${line.name} quantity`} disabled={line.quantity===99} onClick={()=>changeQuantity(line.id,line.color,line.quantity+1)}>+</button></div></div><button className="remove-line" onClick={()=>removeItem(line.id,line.color)} aria-label={`Remove ${line.name}`}>×</button></article>)}<p className="bag-total">TOTAL <strong>{cart.reduce((sum,line)=>sum+line.price*line.quantity,0)} TND</strong></p></>}</div>;
+ return <div className="shop-panel">{favorites.length===0?<p>No saved looks yet.</p>:favorites.map(id=>{const product=featuredProducts.find(p=>p.id===id);const outfit=outfits.find(p=>p.id===id);if(!product&&!outfit)return null;const name=product?.name||outfit!.label;return <article className="shop-line" key={id}><Link href={`/products/${id}`}><img src={product?.variants[0].image||outfit!.model} alt={name}/></Link><div><Link href={`/products/${id}`}>{name}</Link><p>{product?.price||outfit!.price} TND</p></div><button className="remove-line" aria-label={`Remove ${name} from favorites`} onClick={()=>toggleFavorite(id)}>×</button></article>})}</div>;
+}

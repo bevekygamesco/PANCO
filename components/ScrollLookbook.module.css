@@ -1,0 +1,27 @@
+/* Keep the scroll stage independent of earlier global sticky overrides. */
+.canvas {
+ position:absolute;
+ inset:0 auto auto 0;
+ width:100%;
+ height:max(100svh,calc(var(--photo-size) * 2 + var(--row-gap) + 320px));
+ display:grid;
+ grid-template-columns:minmax(0,1fr);
+ opacity:var(--scene-opacity,1);
+ will-change:opacity;
+ grid-template-rows:minmax(130px,1fr) var(--photo-size) var(--photo-size) minmax(180px,1.4fr);
+ row-gap:var(--row-gap);
+ overflow:hidden;
+ background:#0c0d11;
+ color:#fff;
+ --story-progress:0;
+ --story-shift:0px;
+}
+.canvas > * {min-width:0}
+.canvas > header,.canvas > footer {min-height:0;align-self:stretch}
+.canvas > header {transform:none}
+.canvas > footer {opacity:var(--story-out,1);transform:translateY(var(--story-out-y,0px));will-change:opacity}
+@media(max-width:600px) {
+ .canvas {grid-template-rows:minmax(120px,1fr) var(--photo-size) var(--photo-size) minmax(190px,1.4fr)}
+}
+
+@media(prefers-reduced-motion:reduce){.canvas{opacity:1;will-change:auto}}
